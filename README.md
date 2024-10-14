@@ -38,21 +38,22 @@ Ce projet est une application bancaire développée en Java avec Spring Boot. El
     - URL : http://localhost:8080/api/clients
   - Méthode : POST
   - Body (JSON) :
-{
-"nom": "John Doe",
-"email": "john.doe@example.com"
-}
+  ```json
+  {
+   "numeroCompte": "FR7630004000031234567890185", 
+   "solde": 1500.0, 
+  }
 
 - **Créer un Compte** :
   - URL : http://localhost:8080/api/comptes
   - Méthode : POST
   - Body (JSON) :
-{
-"numeroCompte": "FR7630004000031234567890185",
-"solde": 1500.0,
-"clientId": 1  // ID du client créé précédemment
-}
-
+   ```json
+  {
+   "numeroCompte": "FR7630004000031234567890185",
+   "solde": 1500.0,
+   "clientId": 1  // ID du client créé précédemment
+  }
 
 - **Récupérer tous les Clients** :
   - URL : http://localhost:8080/api/clients
