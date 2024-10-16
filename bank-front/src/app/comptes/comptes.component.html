@@ -1,0 +1,14 @@
+<h2>Gestion des Comptes</h2>
+<form (ngSubmit)="createCompte()">
+    <input [(ngModel)]="compte.numeroCompte" name="numeroCompte" placeholder="Numéro de Compte" required />
+    <input [(ngModel)]="compte.solde" name="solde" placeholder="Solde" required />
+    <input [(ngModel)]="compte.clientId" name="clientId" placeholder="Client ID" required />
+    <button type="submit">Créer Compte</button>
+</form>
+
+<ul>
+    <li *ngFor="let compte of comptes">
+        {{ compte.numeroCompte }} - {{ compte.solde }} - Client ID: {{ compte.clientId }}
+        <button (click)="deleteCompte(compte.id)">Supprimer</button>
+    </li>
+</ul>
