@@ -1,0 +1,8 @@
+/* Ajoutez ici les styles spécifiques pour le composant Profil */
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  

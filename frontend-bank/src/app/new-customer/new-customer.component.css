@@ -1,0 +1,12 @@
+/* Ajoutez ici les styles spécifiques pour le composant NewCustomer */
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card {
+    margin-top: 20px;
+  }
+  
