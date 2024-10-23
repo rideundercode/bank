@@ -1,6 +1,6 @@
 package com.back.bank.controllers;
 
-import com.back.bank.models.Compte;
+import com.back.bank.entities.*;
 import com.back.bank.services.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
