@@ -1,5 +1,6 @@
 package com.back.bank.security;
 
+import com.back.bank.dtos.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.Instant;
 import java.util.Map;
@@ -22,35 +24,48 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private JwtEncoder jwtEncoder;
-    @GetMapping("/profile")
-    public Authentication authentication(Authentication authentication) {
-        return authentication;
-    }
 
     @PostMapping("/login")
-    public Map<String, String> login(String username, String pass){
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, pass));
-        Instant now = Instant.now();
-        String scope = authenticate.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+    public Map<String, String> login(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String pass = loginRequest.getPass();
 
-        JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-                .subject(username)
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(3600))
-                .claim("scope",scope)
-                .build();
-        JwtEncoderParameters jwtEncoderParameters =
-                JwtEncoderParameters.from(
-                        JwsHeader.with(MacAlgorithm.HS512).build(),
-                        jwtClaimsSet
-                );
-        String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
-        return Map.of("access_token", jwt);
+        try {
+            // Authentification de l'utilisateur
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, pass));
+
+            // Créer le JWT
+            Instant now = Instant.now();
+            String scope = authenticate.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(" "));
+
+            JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
+                    .subject(username)
+                    .issuedAt(now)
+                    .expiresAt(now.plusSeconds(3600))
+                    .claim("scope", scope)
+                    .build();
+
+            JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(
+                    JwsHeader.with(MacAlgorithm.HS512).build(),
+                    jwtClaimsSet
+            );
+
+            String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+            return Map.of("access_token", jwt); // Retourner le token
+        } catch (Exception e) {
+            // Gérer les erreurs d'authentification
+            System.out.println("Erreur d'authentification pour l'utilisateur : " + username);
+            throw new RuntimeException("Authentification échouée : " + e.getMessage());
+        }
     }
 }
+

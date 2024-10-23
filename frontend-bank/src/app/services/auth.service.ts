@@ -1,30 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+providedIn: 'root'
 })
 export class AuthService {
-  isAuth: boolean = false;
-  roles: any;
-  username: any;
-  accessToken!: any;
+isAuth: boolean = false;
+roles: any;
+username: any;
+accessToken!: any;
 
-  constructor(private http: HttpClient, private router: Router) {}
+constructor(private http: HttpClient, private router: Router) {}
 
   isAdmin(): boolean {
     return this.roles && this.roles.includes('ADMIN');
   }
 
   public login(username: string, password: string): Observable<any> {
-    const options = {
-      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
-    };
-    const params = new HttpParams().set('username', username).set('pass', password);
-    return this.http.post('http://localhost:8080/auth/login', params, options);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json' // Changez le type de contenu en JSON
+    });
+
+    const body = JSON.stringify({
+      username: username,
+      pass: password
+    });
+
+    return this.http.post('http://localhost:8080/auth/login', body, { headers: headers });
   }
 
   loadProfile(data: any): void {
